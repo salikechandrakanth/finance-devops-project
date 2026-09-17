@@ -1,0 +1,45 @@
+---
+- name: Configure server and run finance-tracker-app container
+  hosts: docker_hosts
+  become: true
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install prerequisite packages
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+        state: present
+
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+
+    - name: Ensure Docker service is running
+      service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Add ubuntu user to docker group
+      user:
+        name: ubuntu
+        groups: docker
+        append: yes
+
+    - name: Pull the latest application image
+      docker_container:
+        name: finance-tracker-app
+        image: "yourdockerhubuser/finance-tracker-app:latest"
+        state: started
+        restart: true
+        pull: true
+        ports:
+          - "8080:8080"
