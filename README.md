@@ -1,86 +1,171 @@
 **Finance Tracker REST API**
 
-This is a simple Finance Tracker REST API developed using Java and Spring Boot. It is used to manage financial accounts and transactions.
+A Java Spring Boot-based REST API application designed to manage financial accounts and transactions.
 
-Users can create accounts, deposit money, withdraw money and view their transaction history.
+The application supports account creation, deposits, withdrawals, balance validation, and transaction history.
 
-I also used this application to practice DevOps tools and implement a CI/CD pipeline.
+This project demonstrates an end-to-end DevOps CI/CD workflow using Jenkins, Maven, SonarQube, Docker, DockerHub, and Kubernetes.
 
-**Technologies Used**
+**Project Overview**
 
-- Java
-- Spring Boot
-- Maven
-- H2 Database
-- Git and GitHub
-- Jenkins
-- SonarQube
-- Docker
-- DockerHub
-- Kubernetes
+Key Features
+
+- Create and manage financial accounts.
+- Deposit money into accounts.
+- Withdraw money from accounts.
+- Validate account balances and prevent overdrafts.
+- Maintain transaction history.
+- Expose RESTful API endpoints.
+- Automate application build and testing.
+- Perform code quality analysis using SonarQube.
+- Build and publish Docker images.
+- Deploy and manage application containers using Kubernetes.
+
+**Technology Stack**
+
+Category| Technologies
+Programming Language| Java
+Backend Framework| Spring Boot
+Database| H2 Database
+Build Tool| Maven
+Version Control| Git, GitHub
+CI/CD| Jenkins
+Code Quality| SonarQube
+Containerization| Docker
+Container Registry| DockerHub
+Container Orchestration| Kubernetes
+Operating System| Linux
+
+**DevOps CI/CD Pipeline**
+
+The project uses Jenkins to automate the application build, testing, code analysis, Docker image creation, image publishing, and Kubernetes deployment.
+
+Pipeline Architecture
+
+Developer
+    |
+    v
+GitHub Repository
+    |
+    v
+Jenkins CI/CD Pipeline
+    |
+    v
+Checkout Source Code
+    |
+    v
+Maven Build
+    |
+    v
+Unit Testing
+    |
+    v
+SonarQube Analysis
+    |
+    v
+Quality Gate
+    |
+    v
+Docker Image Build
+    |
+    v
+DockerHub Push
+    |
+    v
+Kubernetes Deployment
+    |
+    v
+Running Application
+
+**Pipeline Stages**
+
+1. Checkout: Jenkins retrieves the application source code from the GitHub repository.
+2. Maven Build: Maven compiles and packages the Spring Boot application.
+3. Unit Testing: Executes unit tests and publishes test reports in Jenkins.
+4. SonarQube Analysis: Performs static code analysis to identify code quality issues.
+5. Quality Gate: Checks the SonarQube quality gate before proceeding.
+6. Docker Image Build: Builds Docker images using the application Dockerfile.
+7. DockerHub Push: Publishes versioned and latest Docker images to DockerHub.
+8. Kubernetes Deployment: Updates the Kubernetes deployment with the newly built Docker image and monitors rollout status.
 
 **Project Structure**
 
 finance-devops-project/
 │
+├── pom.xml
+├── Jenkinsfile
+├── Dockerfile
+├── README.md
+│
 ├── src/
 │   ├── main/
-│   │   └── java/
-│   │       └── com/example/finance/
-│   │           ├── controller/
-│   │           ├── service/
-│   │           ├── repository/
-│   │           └── model/
+│   │   ├── java/com/example/finance/
+│   │   │   ├── model/
+│   │   │   ├── repository/
+│   │   │   ├── service/
+│   │   │   └── controller/
+│   │   │
+│   │   └── resources/
+│   │       └── application.properties
 │   │
 │   └── test/
+│       └── java/
 │
-├── k8s/
-│   ├── deployment.yaml
-│   └── service.yaml
-│
-├── Dockerfile
-├── Jenkinsfile
-├── pom.xml
-└── README.md
+└── k8s/
+    ├── deployment.yaml
+    └── service.yaml
 
-**Application Features**
+REST API Endpoints
 
-- Create a new account.
-- View all accounts.
-- Get account details using account ID.
-- Deposit money.
-- Withdraw money.
-- Check account balance.
-- View transaction history.
-- Prevent withdrawals when the balance is insufficient.
-
-**API Endpoints**
-
-Method| Endpoint| Description
-POST| "/api/accounts"| Create account
-GET| "/api/accounts"| Get all accounts
-GET| "/api/accounts/{id}"| Get account details
+HTTP Method| Endpoint| Description
+POST| "/api/accounts"| Create a new account
+GET| "/api/accounts"| Retrieve all accounts
+GET| "/api/accounts/{id}"| Retrieve an account by ID
 POST| "/api/accounts/{id}/deposit"| Deposit money
 POST| "/api/accounts/{id}/withdraw"| Withdraw money
-GET| "/api/accounts/{id}/transactions"| Get transactions
+GET| "/api/accounts/{id}/transactions"| Retrieve transaction history
 
-Run the Application Locally
+Example API Requests
 
-**Requirements**
+**Create an Account**
 
-- Java JDK
-- Maven
-- Git
+curl -X POST http://localhost:8080/api/accounts \
+-H "Content-Type: application/json" \
+-d '{"ownerName":"Priya Sharma","openingBalance":1000}'
 
-Clone the Repository
+**Deposit Money**
+
+curl -X POST http://localhost:8080/api/accounts/1/deposit \
+-H "Content-Type: application/json" \
+-d '{"amount":500,"description":"Salary"}'
+
+**Withdraw Money**
+
+curl -X POST http://localhost:8080/api/accounts/1/withdraw \
+-H "Content-Type: application/json" \
+-d '{"amount":200,"description":"Rent"}'
+
+**Get Transaction History**
+
+curl http://localhost:8080/api/accounts/1/transactions
+
+Running the Application Locally
+
+**Prerequisites**
+
+- Java JDK compatible with the version configured in "pom.xml".
+- Maven.
+- Git.
+
+**Clone the Repository**
 
 git clone https://github.com/salikechandrakanth/finance-devops-project.git
 
-Go to the Project Directory
+Navigate to the Project
 
 cd finance-devops-project
 
-Build the Application
+Build and Test
 
 mvn clean package
 
@@ -88,128 +173,199 @@ Run the Application
 
 java -jar target/finance-tracker-app.jar
 
-The application runs on:
+**Application URL:**
 
 http://localhost:8080
 
-H2 database console:
+H2 Database Console (development only):
 
 http://localhost:8080/h2-console
 
-Docker
+**JDBC URL:**
 
-I used Docker to create an image of the Spring Boot application and run it inside a container.
+jdbc:h2:mem:financedb
 
-Build Docker Image
+Running the Application Using Docker
+
+**Prerequisites**
+
+- Docker installed and running.
+
+**Build Docker Image**
 
 docker build -t finance-tracker-app .
 
-Run Container
+**Run Docker Container**
 
-docker run -d -p 8080:8080 --name finance-app finance-tracker-app
+docker run -d \
+--name finance-tracker-container \
+-p 8080:8080 \
+finance-tracker-app
 
-Check Running Containers
+**Verify Container**
 
 docker ps
 
-Jenkins CI/CD Pipeline
+**Check Container Logs**
 
-Jenkins is used to automate the build, testing and deployment process.
+docker logs finance-tracker-container
 
-The pipeline is configured in the "Jenkinsfile".
+Jenkins CI/CD Configuration
 
-**Pipeline Flow**
+**Prerequisites**
 
-GitHub
-   |
-   v
-Jenkins
-   |
-   v
-Checkout
-   |
-   v
-Maven Build
-   |
-   v
-Unit Testing
-   |
-   v
-SonarQube Analysis
-   |
-   v
-Quality Gate
-   |
-   v
-Docker Image Build
-   |
-   v
-Push Image to DockerHub
-   |
-   v
-Deploy to Kubernetes
+- Jenkins installed and running.
+- Git plugin.
+- Maven configured in Jenkins.
+- JDK configured in Jenkins.
+- Docker installed on the Jenkins agent.
+- DockerHub account.
+- SonarQube server configured.
+- Kubernetes cluster.
+- kubectl installed and configured on the Jenkins agent.
 
-**Pipeline Stages**
+**Jenkins Tool Configuration**
 
-1. Checkout the source code from GitHub.
-2. Build the application using Maven.
-3. Execute unit tests.
-4. Perform code analysis using SonarQube.
-5. Check the SonarQube quality gate.
-6. Build the Docker image.
-7. Push the image to DockerHub.
-8. Deploy the application to Kubernetes.
+Configure the following tools under Jenkins Global Tool Configuration:
 
-SonarQube
+- JDK name: "jdk11"
+- Maven name: "maven3"
 
-SonarQube is used to check the code quality and identify code issues.
+These names must match the tool names specified in the Jenkinsfile.
 
-I configured SonarQube with Jenkins to perform code analysis during the pipeline execution.
+**Jenkins Credentials**
 
-SonarQube can be accessed through port "9000" when running locally.
+Configure the following credentials under Jenkins Credentials:
 
-Kubernetes
+Credential ID| Purpose
+Docker| DockerHub username and password
+kubeconfig-creds| Kubernetes kubeconfig file
 
-Kubernetes is used to deploy and manage the application containers.
+Configure SonarQube under Manage Jenkins → System:
 
-The project contains two Kubernetes configuration files:
+- SonarQube server name: "MySonarQubeServer"
 
-- "deployment.yaml" – Used to create and manage application Pods.
-- "service.yaml" – Used to expose the application.
+The configured server name must match the Jenkinsfile.
 
-**Apply Deployment**
+**Create Jenkins Pipeline Job**
+
+1. Open Jenkins.
+2. Select New Item.
+3. Enter a job name.
+4. Select Pipeline.
+5. Choose Pipeline script from SCM.
+6. Select Git as the SCM.
+7. Enter the GitHub repository URL.
+8. Select the "main" branch.
+9. Set the script path to "Jenkinsfile".
+10. Save and execute the pipeline.
+
+**SonarQube Configuration**
+
+SonarQube performs static code analysis and evaluates the quality of the application source code.
+
+**Run SonarQube Using Docker**
+
+docker run -d \
+--name sonarqube \
+-p 9000:9000 \
+sonarqube
+
+**Access SonarQube:**
+
+http://localhost:9000
+
+Configure the SonarQube server in Jenkins and ensure the project analysis is connected to the configured server.
+
+Kubernetes Deployment
+
+The application is deployed using Kubernetes Deployment and Service resources.
+
+**Prerequisites**
+
+- Docker image pushed to DockerHub.
+- Kubernetes cluster.
+- kubectl configured.
+- Kubernetes deployment and service YAML files.
+
+Manual Deployment
+
+Update the image reference in "k8s/deployment.yaml" with the DockerHub image.
+
+Apply the Deployment:
 
 kubectl apply -f k8s/deployment.yaml
 
-Apply Service
+Apply the Service:
 
 kubectl apply -f k8s/service.yaml
 
-Check Pods
+Verify Deployment
+
+Check Pods:
 
 kubectl get pods
 
-Check Services
+Check Services:
 
 kubectl get services
 
-Check Deployment Status
+Check Deployment:
+
+kubectl get deployments
+
+Verify Rollout Status
 
 kubectl rollout status deployment/finance-tracker-app
 
+Access Application Using Minikube
+
+minikube service finance-tracker-app-service
+
+Automated Kubernetes Deployment Through Jenkins
+
+The Jenkins pipeline includes a Kubernetes deployment stage.
+
+After successfully building and pushing the Docker image, Jenkins performs the following operations:
+
+1. Loads Kubernetes credentials from Jenkins.
+2. Applies the Kubernetes Deployment configuration.
+3. Applies the Kubernetes Service configuration.
+4. Updates the deployment with the newly generated Docker image tag.
+5. Waits for the Kubernetes rollout to complete.
+6. Checks the running Pods and Services.
+
+The deployment uses the Docker image tag generated from the Jenkins build number.
+
+Example:
+
+chandrakanth1439/finance-app:15
+
+This approach helps deploy a specific version of the application instead of relying only on the latest image tag.
+
 **Future Enhancements**
 
-I am planning to explore the following tools and integrate them into the project in the future:
+Additional DevOps tools can be integrated into the project in the future:
 
-- Terraform for infrastructure provisioning.
-- Ansible for configuration management.
-- Prometheus and Grafana for monitoring.
-- PostgreSQL for persistent database storage.
+- Terraform: To automate cloud infrastructure provisioning.
+- Ansible: To automate server configuration and application setup.
+- Persistent Database: Integration with PostgreSQL or MySQL.
+- Monitoring: Integration with Prometheus and Grafana.
 
-These tools are not currently implemented in this project.
+These are planned enhancements and are not part of the currently implemented CI/CD pipeline.
 
-Database
+Database Information
 
-The application currently uses the H2 in-memory database.
+The application uses the H2 in-memory database for development and demonstration purposes.
 
-Since it is an in-memory database, the stored data will be lost when the application restarts.
+Note: Data stored in an in-memory database is not persistent across application restarts.
+
+A persistent database can be integrated as a future enhancement.
+
+**Security Considerations**
+
+- Do not commit passwords, API keys, or cloud credentials to GitHub.
+- Store sensitive credentials in Jenkins Credentials.
+- Use secure authentication for DockerHub.
+- Protect Kubernetes cluster access using appropriate RBAC permissions.
+- Review deployment configurations before applying them.
