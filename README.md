@@ -117,6 +117,3 @@ side: a push triggers Jenkins, which builds and tests with Maven, runs a
 SonarQube quality gate, containerizes with Docker, provisions infra with
 Terraform, configures the server with Ansible, and deploys to Kubernetes
 with health/readiness probes so bad rollouts get caught automatically."
-
-That one paragraph shows both a working, business-relevant app *and*
-end-to-end pipeline ownership — the combination interviewers want to see.
