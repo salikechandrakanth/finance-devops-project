@@ -40,8 +40,8 @@ Operating System| Linux
 
 The project uses Jenkins to automate the application build, testing, code analysis, Docker image creation, image publishing, and Kubernetes deployment.
 
-Pipeline Architecture
-
+**Pipeline Architecture**
+\\\
 Developer
     |
     v
@@ -76,6 +76,7 @@ Kubernetes Deployment
     |
     v
 Running Application
+\\\
 
 **Pipeline Stages**
 
@@ -90,43 +91,35 @@ Running Application
 
 **Project Structure**
 
-finance-devops-project/
-│
-├── pom.xml
-├── Jenkinsfile
-├── Dockerfile
-├── README.md
-│
-├── src/
-│   ├── main/
-│   │   ├── java/com/example/finance/
-│   │   │   ├── model/
-│   │   │   ├── repository/
-│   │   │   ├── service/
-│   │   │   └── controller/
-│   │   │
-│   │   └── resources/
-│   │       └── application.properties
-│   │
-│   └── test/
-│       └── java/
-│
-└── k8s/
-    ├── deployment.yaml
-    └── service.yaml
+The project is organized into the following folders and files:
 
-REST API Endpoints
+- "pom.xml" – Maven configuration file
+- "Jenkinsfile" – Jenkins pipeline configuration
+- "Dockerfile" – Docker image configuration
+- "README.md" – Project documentation
+- "src/main/java/com/example/finance/"
+  - "model/" – Entity classes
+  - "repository/" – Database operations
+  - "service/" – Business logic
+  - "controller/" – REST API controllers
+- "src/main/resources/"
+  - "application.properties" – Application configuration
+- "src/test/java/" – Unit test cases
+- "k8s/"
+  - "deployment.yaml" – Kubernetes deployment configuration
+  - "service.yaml" – Kubernetes service configuration
 
-HTTP Method| Endpoint| Description
-POST| "/api/accounts"| Create a new account
-GET| "/api/accounts"| Retrieve all accounts
-GET| "/api/accounts/{id}"| Retrieve an account by ID
-POST| "/api/accounts/{id}/deposit"| Deposit money
-POST| "/api/accounts/{id}/withdraw"| Withdraw money
-GET| "/api/accounts/{id}/transactions"| Retrieve transaction history
+**REST API Endpoints**
 
-Example API Requests
+The application provides the following REST APIs:
 
+- POST "/api/accounts" – Create a new account.
+- GET "/api/accounts" – Retrieve all accounts.
+- GET "/api/accounts/{id}" – Get account details.
+- POST "/api/accounts/{id}/deposit" – Deposit money.
+- POST "/api/accounts/{id}/withdraw" – Withdraw money.
+- GET "/api/accounts/{id}/transactions" – View transaction history.
+  
 **Create an Account**
 
 curl -X POST http://localhost:8080/api/accounts \
@@ -189,7 +182,7 @@ Running the Application Using Docker
 
 **Prerequisites**
 
-- Docker installed and running.
+ Docker installed and running.
 
 **Build Docker Image**
 
@@ -361,11 +354,3 @@ The application uses the H2 in-memory database for development and demonstration
 Note: Data stored in an in-memory database is not persistent across application restarts.
 
 A persistent database can be integrated as a future enhancement.
-
-**Security Considerations**
-
-- Do not commit passwords, API keys, or cloud credentials to GitHub.
-- Store sensitive credentials in Jenkins Credentials.
-- Use secure authentication for DockerHub.
-- Protect Kubernetes cluster access using appropriate RBAC permissions.
-- Review deployment configurations before applying them.
