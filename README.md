@@ -1,109 +1,215 @@
-# finance-tracker-app
+**Finance Tracker REST API**
 
-A small finance/expense-tracking REST API (Spring Boot + H2) used as the
-"payload" for an end-to-end DevOps CI/CD pipeline demo. Manages accounts,
-deposits, withdrawals, and transaction history — a much better talking
-point in an interview than a plain "hello world."
+This is a simple Finance Tracker REST API developed using Java and Spring Boot. It is used to manage financial accounts and transactions.
 
-## Pipeline flow
+Users can create accounts, deposit money, withdraw money and view their transaction history.
 
-```
-Git push  -->  Jenkins  -->  Maven build/test  -->  SonarQube quality gate
-   -->  Docker build/push  -->  Terraform (provision infra)
-   -->  Ansible (configure server / install Docker)
-   -->  Kubernetes (deploy container)
-```
+I also used this application to practice DevOps tools and implement a CI/CD pipeline.
 
-## Project layout
+**Technologies Used**
 
-```
-finance-tracker-app/
-├── pom.xml
-├── src/main/java/com/example/finance/
-│   ├── model/           # Account, Transaction entities
-│   ├── repository/      # Spring Data JPA repositories
-│   ├── service/         # Business logic (deposit/withdraw, balance checks)
-│   └── controller/      # REST endpoints + error handling
-├── src/test/java/...     # Unit tests (deposit, withdraw, insufficient funds)
-├── Dockerfile             # Multi-stage build -> small runtime image
-├── Jenkinsfile            # Declarative pipeline, all stages wired up
+- Java
+- Spring Boot
+- Maven
+- H2 Database
+- Git and GitHub
+- Jenkins
+- SonarQube
+- Docker
+- DockerHub
+- Kubernetes
+
+**Project Structure**
+
+finance-devops-project/
+│
+├── src/
+│   ├── main/
+│   │   └── java/
+│   │       └── com/example/finance/
+│   │           ├── controller/
+│   │           ├── service/
+│   │           ├── repository/
+│   │           └── model/
+│   │
+│   └── test/
+│
 ├── k8s/
-│   ├── deployment.yaml    # K8s Deployment w/ health probes
-│   └── service.yaml       # LoadBalancer Service
-├── ansible/
-│   ├── inventory.ini
-│   └── playbook.yml        # Installs Docker, runs the container
-└── terraform/
-    ├── main.tf              # Provisions an EC2 instance + security group
-    └── variables.tf
-```
+│   ├── deployment.yaml
+│   └── service.yaml
+│
+├── Dockerfile
+├── Jenkinsfile
+├── pom.xml
+└── README.md
 
-## API endpoints
+**Application Features**
 
-| Method | Path                              | Description                       |
-|--------|------------------------------------|------------------------------------|
-| POST   | `/api/accounts`                    | Create an account                  |
-| GET    | `/api/accounts`                    | List all accounts                  |
-| GET    | `/api/accounts/{id}`               | Get one account                    |
-| POST   | `/api/accounts/{id}/deposit`       | Deposit funds                      |
-| POST   | `/api/accounts/{id}/withdraw`      | Withdraw funds (rejects overdraw)  |
-| GET    | `/api/accounts/{id}/transactions`  | Transaction history for an account |
+- Create a new account.
+- View all accounts.
+- Get account details using account ID.
+- Deposit money.
+- Withdraw money.
+- Check account balance.
+- View transaction history.
+- Prevent withdrawals when the balance is insufficient.
 
-### Example usage
+**API Endpoints**
 
-```bash
-# Create an account
-curl -X POST localhost:8080/api/accounts \
-  -H "Content-Type: application/json" \
-  -d '{"ownerName": "Priya Sharma", "openingBalance": 1000}'
+Method| Endpoint| Description
+POST| "/api/accounts"| Create account
+GET| "/api/accounts"| Get all accounts
+GET| "/api/accounts/{id}"| Get account details
+POST| "/api/accounts/{id}/deposit"| Deposit money
+POST| "/api/accounts/{id}/withdraw"| Withdraw money
+GET| "/api/accounts/{id}/transactions"| Get transactions
 
-# Deposit
-curl -X POST localhost:8080/api/accounts/1/deposit \
-  -H "Content-Type: application/json" \
-  -d '{"amount": 500, "description": "Salary"}'
+Run the Application Locally
 
-# Withdraw
-curl -X POST localhost:8080/api/accounts/1/withdraw \
-  -H "Content-Type: application/json" \
-  -d '{"amount": 200, "description": "Rent"}'
+**Requirements**
 
-# Check transaction history
-curl localhost:8080/api/accounts/1/transactions
-```
+- Java JDK
+- Maven
+- Git
 
-## Run it locally (no pipeline needed)
+Clone the Repository
 
-```bash
+git clone https://github.com/salikechandrakanth/finance-devops-project.git
+
+Go to the Project Directory
+
+cd finance-devops-project
+
+Build the Application
+
 mvn clean package
+
+Run the Application
+
 java -jar target/finance-tracker-app.jar
-# H2 console (dev only): http://localhost:8080/h2-console  (JDBC URL: jdbc:h2:mem:financedb)
-```
 
-## Run it in Docker
+The application runs on:
 
-```bash
+http://localhost:8080
+
+H2 database console:
+
+http://localhost:8080/h2-console
+
+Docker
+
+I used Docker to create an image of the Spring Boot application and run it inside a container.
+
+Build Docker Image
+
 docker build -t finance-tracker-app .
-docker run -p 8080:8080 finance-tracker-app
-```
 
-## Run it on Kubernetes (e.g. Minikube)
+Run Container
 
-```bash
-# swap IMAGE_PLACEHOLDER in k8s/deployment.yaml for your built image first
+docker run -d -p 8080:8080 --name finance-app finance-tracker-app
+
+Check Running Containers
+
+docker ps
+
+Jenkins CI/CD Pipeline
+
+Jenkins is used to automate the build, testing and deployment process.
+
+The pipeline is configured in the "Jenkinsfile".
+
+**Pipeline Flow**
+
+GitHub
+   |
+   v
+Jenkins
+   |
+   v
+Checkout
+   |
+   v
+Maven Build
+   |
+   v
+Unit Testing
+   |
+   v
+SonarQube Analysis
+   |
+   v
+Quality Gate
+   |
+   v
+Docker Image Build
+   |
+   v
+Push Image to DockerHub
+   |
+   v
+Deploy to Kubernetes
+
+**Pipeline Stages**
+
+1. Checkout the source code from GitHub.
+2. Build the application using Maven.
+3. Execute unit tests.
+4. Perform code analysis using SonarQube.
+5. Check the SonarQube quality gate.
+6. Build the Docker image.
+7. Push the image to DockerHub.
+8. Deploy the application to Kubernetes.
+
+SonarQube
+
+SonarQube is used to check the code quality and identify code issues.
+
+I configured SonarQube with Jenkins to perform code analysis during the pipeline execution.
+
+SonarQube can be accessed through port "9000" when running locally.
+
+Kubernetes
+
+Kubernetes is used to deploy and manage the application containers.
+
+The project contains two Kubernetes configuration files:
+
+- "deployment.yaml" – Used to create and manage application Pods.
+- "service.yaml" – Used to expose the application.
+
+**Apply Deployment**
+
 kubectl apply -f k8s/deployment.yaml
+
+Apply Service
+
 kubectl apply -f k8s/service.yaml
+
+Check Pods
+
 kubectl get pods
-minikube service finance-tracker-app-service
-```
 
-## Wiring up the rest
+Check Services
 
-- **Jenkins**: create a Pipeline job pointing at this repo; Jenkins auto-detects
-  the `Jenkinsfile`. Add `dockerhub-creds` and `kubeconfig-creds` under
-  Jenkins > Credentials, and a SonarQube server under Manage Jenkins > System.
-- **SonarQube**: run locally (`docker run -p 9000:9000 sonarqube`) or use
-  SonarCloud; update `sonar.host.url` in `pom.xml`.
-- **Terraform**: fill in your AWS key pair name (`terraform/variables.tf`)
-  and run `terraform init && terraform apply` from `terraform/`.
-- **Ansible**: replace `<EC2_PUBLIC_IP>` in `ansible/inventory.ini` with the
-  IP Terraform outputs, then `ansible-playbook -i inventory.ini playbook.yml`.
+kubectl get services
+
+Check Deployment Status
+
+kubectl rollout status deployment/finance-tracker-app
+
+**Future Enhancements**
+
+I am planning to explore the following tools and integrate them into the project in the future:
+
+- Terraform for infrastructure provisioning.
+- Ansible for configuration management.
+- Prometheus and Grafana for monitoring.
+- PostgreSQL for persistent database storage.
+
+These tools are not currently implemented in this project.
+
+Database
+
+The application currently uses the H2 in-memory database.
+
+Since it is an in-memory database, the stored data will be lost when the application restarts.
