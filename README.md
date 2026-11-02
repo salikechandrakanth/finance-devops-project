@@ -107,13 +107,3 @@ minikube service finance-tracker-app-service
   and run `terraform init && terraform apply` from `terraform/`.
 - **Ansible**: replace `<EC2_PUBLIC_IP>` in `ansible/inventory.ini` with the
   IP Terraform outputs, then `ansible-playbook -i inventory.ini playbook.yml`.
-
-## What to say in the interview
-
-"This is a finance service that handles account balances and transactions —
-deposits, withdrawals, and overdraft protection are enforced in the service
-layer, and every change is tracked as a transaction record. On the DevOps
-side: a push triggers Jenkins, which builds and tests with Maven, runs a
-SonarQube quality gate, containerizes with Docker, provisions infra with
-Terraform, configures the server with Ansible, and deploys to Kubernetes
-with health/readiness probes so bad rollouts get caught automatically."
