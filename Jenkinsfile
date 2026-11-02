@@ -7,17 +7,18 @@ pipeline {
     }
 
     environment {
-        DOCKERHUB_CREDS   = credentials('Docker')
-        IMAGE_NAME         = "chandrakanth1439/finance-app"
-        IMAGE_TAG           = "${env.BUILD_NUMBER}"
-        SONARQUBE_ENV      = "MySonarQubeServer"
+        DOCKERHUB_CREDS = credentials('Docker')
+        IMAGE_NAME      = "chandrakanth1439/finance-app"
+        IMAGE_TAG       = "${env.BUILD_NUMBER}"
+        SONARQUBE_ENV   = "MySonarQubeServer"
     }
 
     stages {
 
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/salikechandrakanth/finance-devops-project.git'
+                git branch: 'main',
+                    url: 'https://github.com/salikechandrakanth/finance-devops-project.git'
             }
         }
 
@@ -41,7 +42,9 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv("${SONARQUBE_ENV}") {
-                    sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.9.1.2184:sonar'
+                    sh '''
+                    mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.9.1.2184:sonar
+                    '''
                 }
             }
         }
@@ -56,15 +59,47 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} -t ${IMAGE_NAME}:latest ."
+                sh """
+                docker build \
+                    -t ${IMAGE_NAME}:${IMAGE_TAG} \
+                    -t ${IMAGE_NAME}:latest .
+                """
             }
         }
 
         stage('Push Docker Image') {
             steps {
-                sh "echo ${DOCKERHUB_CREDS_PSW} | docker login -u ${DOCKERHUB_CREDS_USR} --password-stdin"
+                sh """
+                echo "\$DOCKERHUB_CREDS_PSW" | docker login \
+                    -u "\$DOCKERHUB_CREDS_USR" \
+                    --password-stdin
+                """
+
                 sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
                 sh "docker push ${IMAGE_NAME}:latest"
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                withCredentials([
+                    file(credentialsId: 'kubeconfig-creds',
+                         variable: 'KUBECONFIG')
+                ]) {
+                    sh """
+                    kubectl apply -f k8s/deployment.yaml
+                    kubectl apply -f k8s/service.yaml
+
+                    kubectl set image deployment/finance-tracker-app \
+                        finance-tracker-app=${IMAGE_NAME}:${IMAGE_TAG}
+
+                    kubectl rollout status deployment/finance-tracker-app \
+                        --timeout=180s
+
+                    kubectl get pods
+                    kubectl get services
+                    """
+                }
             }
         }
     }
@@ -73,6 +108,7 @@ pipeline {
         success {
             echo 'Pipeline completed successfully!'
         }
+
         failure {
             echo 'Pipeline failed. Check logs above.'
         }
