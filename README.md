@@ -41,7 +41,7 @@ Operating System| Linux
 The project uses Jenkins to automate the application build, testing, code analysis, Docker image creation, image publishing, and Kubernetes deployment.
 
 **Pipeline Architecture**
-\\\
+```text
 Developer
     |
     v
@@ -76,8 +76,7 @@ Kubernetes Deployment
     |
     v
 Running Application
-\\\
-
+```
 **Pipeline Stages**
 
 1. Checkout: Jenkins retrieves the application source code from the GitHub repository.
@@ -89,25 +88,29 @@ Running Application
 7. DockerHub Push: Publishes versioned and latest Docker images to DockerHub.
 8. Kubernetes Deployment: Updates the Kubernetes deployment with the newly built Docker image and monitors rollout status.
 
+````markdown
 **Project Structure**
 
-The project is organized into the following folders and files:
-
-- "pom.xml" – Maven configuration file
-- "Jenkinsfile" – Jenkins pipeline configuration
-- "Dockerfile" – Docker image configuration
-- "README.md" – Project documentation
-- "src/main/java/com/example/finance/"
-  - "model/" – Entity classes
-  - "repository/" – Database operations
-  - "service/" – Business logic
-  - "controller/" – REST API controllers
-- "src/main/resources/"
-  - "application.properties" – Application configuration
-- "src/test/java/" – Unit test cases
-- "k8s/"
-  - "deployment.yaml" – Kubernetes deployment configuration
-  - "service.yaml" – Kubernetes service configuration
+```text
+finance-devops-project/
+│
+├── pom.xml
+├── Jenkinsfile
+├── Dockerfile
+├── README.md
+│
+├── src/
+│   ├── main/
+│   │   └── java/
+│   │       └── com/example/finance/
+│   │           ├── model/
+│   │           ├── repository/
+│   │           ├── service/
+│   │           └── controller/
+│
+└── k8s/
+    ├── deployment.yaml
+    └── service.yaml
 
 **REST API Endpoints**
 
